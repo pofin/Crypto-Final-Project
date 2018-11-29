@@ -12,10 +12,11 @@ Daniel
 #### Finished (?)
 
 ### RSA
-#### Not Started
+#### Semantically Secure In Progress
+Jacob
 
 ### RC4
-#### In Progress
+#### Finished
 Jacob
 
 ### DES
