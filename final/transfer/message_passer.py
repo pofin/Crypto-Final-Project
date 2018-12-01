@@ -1,4 +1,5 @@
 import logging
+import socket
 
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,10 @@ class MessagePasser:
       data_this_round = sock.recv(remaining).decode("utf-8")
       remaining -= len(data_this_round)
       data += data_this_round
+
+      if len(data_this_round) == 0:
+        # Client disconnected.
+        raise socket.error("Client disconnected.")
 
     return data
 

@@ -139,7 +139,7 @@ class ServerSessionVerify(_ProtocolMessage):
     Args:
       session_context: SecureContext for the session key.
     This message supports the following parameters:
-      verification: Verification value to send to the client. """
+      verification: Verification value to send to the client. (encrypted) """
     plain_verification = kwargs["verification"]
 
     # Encrypt the verification value.
@@ -147,5 +147,26 @@ class ServerSessionVerify(_ProtocolMessage):
 
     message = cls()
     message._raw = {"verification": verification}
+
+    return message
+
+class SessionMessage(_ProtocolMessage):
+  """ A standard encrypted message that is send back and forth during the
+  session. """
+
+  @classmethod
+  def create(cls, session_context, **kwargs):
+    """
+    Args:
+      session_context: SecureContext for the session key.
+    This message supports the following parameters:
+      contents: Arbitrary data to send to the client. (encrypted) """
+    plain_contents = kwargs["contents"]
+
+    # Encrypt the data.
+    contents = session_context.encrypt(plain_contents)
+
+    message = cls()
+    message._raw = {"contents": contents}
 
     return message

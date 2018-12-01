@@ -108,6 +108,19 @@ class Server(message_passer.MessagePasser):
 
     logger.info("Session successfully initialized.")
 
+  def __receive_message(self, client_sock):
+    """ Receives and displays a message from the client.
+    Args:
+      client_sock: The socket to read messages on. """
+    # Wait for a message.
+    message = self._read_message(messages.SessionMessage, client_sock)
+
+    # Extract the message contents.
+    symmetric_context = self.__manager.get_symmetric()
+    contents = message.get_encrypted("contents", symmetric_context)
+
+    logger.info("Got message: %s" % (contents))
+
   def handle_client(self):
     """ Waits for a client to connect, services all the client's requests, and
     then returns when the client disconnects. """
@@ -117,3 +130,11 @@ class Server(message_passer.MessagePasser):
 
     # Perform the handshake.
     self.__handshake_with(client_sock)
+
+    # Receive messages.
+    while True:
+      try:
+        self.__receive_message(client_sock)
+      except socket.error:
+        logger.info("Client disconnected.")
+        break

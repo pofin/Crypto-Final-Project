@@ -30,6 +30,10 @@ class Client(message_passer.MessagePasser):
     # Perform the handshake.
     self.__handshake()
 
+  def __del__(self):
+    logger.debug("Closing socket.")
+    self.__socket.close()
+
   def __perform_challenge(self, server_pub_context):
     """ Generates a secure challenge value, and sends it to the server. Then it
     waits for the server's response and checks that it is valid.
@@ -111,3 +115,13 @@ class Client(message_passer.MessagePasser):
     self.__perform_challenge(server_pub_context)
 
     logger.info("Session successfully initialized.")
+
+  def send_message(self, data):
+    """ Sends an encrypted message to the server.
+    Args:
+      data: The data to send. """
+    symmetric_context = self.__manager.get_symmetric()
+
+    # Create and send the message.
+    message = messages.SessionMessage.create(symmetric_context, contents=data)
+    self._write_message(message, self.__socket)
