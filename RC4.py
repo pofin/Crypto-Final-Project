@@ -11,10 +11,12 @@ class RC4(Symmetric):
     def encrypt(self, message):
         """ Encrypts a message.
         Args:
-            message: The message to encrypt.
+            message (string): The message to encrypt.
         Returns:
-            The encrypted message. """
+            (string) The encrypted message. """
         k = self.key.tobytes()
+        msg = bitarray(0)
+        msg.frombytes(message.encode('latin-1'))
         s = list(range(256))
         j = 0
         for i in range(256):
@@ -22,7 +24,7 @@ class RC4(Symmetric):
             tmp = s[i]
             s[i] = s[j]
             s[j] = tmp
-        m = message.tobytes()
+        m = msg.tobytes()
         c = bitarray(0)
         i = 0
         j = 0
@@ -35,15 +37,15 @@ class RC4(Symmetric):
             xk = s[(s[i]+s[j])%256]
             bkey = bitarray(bin(xk).lstrip('0b'))
             while len(bkey) < 8: bkey.insert(0,False)
-            c.extend(bkey^message[8*it:8*(it+1)])
-        return c
+            c.extend(bkey^msg[8*it:8*(it+1)])
+        return c.tobytes().decode('latin-1')
 
     def decrypt(self, message):
         """ Decrypts a message.
         Args:
-            message: The message to decrypt.
+            message (string): The message to decrypt.
         Returns:
-            The decrypted message. """
+            (string) The decrypted message. """
         return self.encrypt(message)
 
     def gen_key(self):
@@ -51,7 +53,7 @@ class RC4(Symmetric):
         Args:
             None.
         Returns:
-            The generated key. """
+            (bitarray) The generated key. """
         tmp_key = secrets.randbits(self.keysize)
         for i in range(self.keysize):
             self.key[self.keysize-1-i] = ((tmp_key >> i) & 1)
@@ -60,9 +62,9 @@ class RC4(Symmetric):
     def set_key(self, new_key):
         """ Sets the key to the argument value
         Args:
-            new_key: the new key to set_key.
+            new_key (bittaray): the new key to set_key.
         Returns:S
-            New key. """
+            (bitarray) New key. """
         print("nkey",new_key)
         self.key = bitarray(new_key)
         return self.key
@@ -72,17 +74,16 @@ class RC4(Symmetric):
         Args:
             None.
         Returns:
-            Current key. """
+            (bitarray) Current key. """
         return self.key
 
 
 if __name__ == "__main__":
     c = RC4(56)
     a = c.gen_key()
-    m = input("Message => ")
-    msg = bitarray(0)
-    msg.frombytes(m.encode())
+    msg = input("Message => ")
     #print(msg)
     en = c.encrypt(msg)
+    print(en)
     dec = c.decrypt(en)
-    print(dec.tobytes().decode())
+    print(dec)

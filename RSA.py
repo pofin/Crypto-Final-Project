@@ -17,8 +17,8 @@ class RSA(Pkc):
         """ Tests a number to be prime using the Miller Rabin Primality
         Test
         Args:
-            n: number to be tested for primality.
-            k: accuracy of the test, number of tests to run
+            n (int): number to be tested for primality.
+            k (int): accuracy of the test, number of tests to run
         Returns:
             True if most likely prime, False if not prime. """
         d = n-1
@@ -45,9 +45,9 @@ class RSA(Pkc):
     def gcd(self, a, b):
         """ Computes the greatest common denominator
         Args:
-            a,b: numbers to compute
+            a,b (int): numbers to compute
         Returns:
-            The greatest common denominator """
+            (int) The greatest common denominator """
         if a == 0:
             return (b, 0, 1)
         else:
@@ -57,10 +57,10 @@ class RSA(Pkc):
     def invert(self, a, m):
         """ Computs a modular inverse
         Args:
-            a: the number to invert.
-            m: the modular base.
+            a (int): the number to invert.
+            m (int): the modular base.
         Returns:
-            The modular inverse. """
+            (int) The modular inverse. """
         g, x, y = self.gcd(a, m)
         if g == 1:
             return x % m
@@ -68,9 +68,9 @@ class RSA(Pkc):
     def rand_prime(self, size):
         """ Generates a random prime number
         Args:
-            size: the number of bits in the prime
+            size (int): the number of bits in the prime
         Returns:
-            The ramdom prime. """
+            (int) The ramdom prime. """
         p = secrets.randbits(size - 1)
         p = (p << 1) + 1
         while self.is_prime_MR(p,10000) == False:
@@ -80,35 +80,35 @@ class RSA(Pkc):
     def encrypt_public(self, message):
         """ Encrypts a message using the public key.
         Args:
-            message: The message to encrypt.
+            message (int): The message to encrypt.
         Returns:
-            The encrypted message. """
+            (int) The encrypted message. """
         enc = pow(message, self.e, self.n)
         return enc
 
     def encrypt_private(self, message):
         """ Encrypts a message using the private key.
         Args:
-            message: The message to encrypt.
+            message (int): The message to encrypt.
         Returns:
-            The encrypted message. """
+            (int) The encrypted message. """
         return pow(message, self.d, self.n)
 
     def decrypt_public(self, message):
         """ Decrypts a message using the public key.
         Args:
-            message: The message to decrypt.
+            message (int): The message to decrypt.
         Returns:
-            The decrypted message. """
+            (int) The decrypted message. """
         return pow(message, self.e, self.n)
 
 
     def decrypt_private(self, message):
         """ Decrypts a message using the private key.
         Args:
-            message: The message to decrypt.
+            message (int): The message to decrypt.
         Returns:
-            The decrypted message. """
+            (int) The decrypted message. """
         intval = pow(message, self.d, self.n)
         return intval
 
@@ -116,7 +116,7 @@ class RSA(Pkc):
         """ Generates a random public-private key pair suitable for this
         cryptosystem.
         Returns:
-            The public key and the private key. """
+            (int,int) The public key and the private key. """
         found_pair = False
         while found_pair == False:
             self.p = c.rand_prime(int(self.keysize/2+1))
@@ -130,18 +130,18 @@ class RSA(Pkc):
     def get_key(self):
         """ Get the public and private key materials
         Returns:
-            Public key, private key, n """
+            (int,int,int) Public key, private key, n """
         return self.e, self.d, self.n
 
     def set_key(self, ne, nd, nn, np, nq):
         """ Sets the new key for this object
         Args:
-            ne: new public key
-            nd: new private key
-            nn: new modulous
-            np: new p
-            nq: new q
-        Returns:
+            ne (int): new public key
+            nd (int): new private key
+            nn (int): new modulous
+            np (int): new p
+            nq (int): new q
+        Returns
             None. """
         self.e = ne
         self.d = nd
