@@ -1,4 +1,4 @@
-from crypto.cryptosystem import Symmetric
+from cryptosystem import Symmetric
 from bitarray import *
 import secrets
 import math
@@ -76,6 +76,14 @@ class RC4(Symmetric):
         Returns:
             (bitarray) Current key. """
         return self.key
+
+    def get_name():
+        """ Returns the unique name for this cryptosystem """
+        return "RC4"
+
+    def get_priority():
+        """ Returns the priority for this cryptosystem """
+        return 1
 
 
 if __name__ == "__main__":

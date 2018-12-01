@@ -1,4 +1,4 @@
-from crypto.cryptosystem import Pkc
+from cryptosystem import Pkc
 from bitarray import *
 import secrets
 import math
@@ -127,28 +127,43 @@ class RSA(Pkc):
         self.n = self.p*self.q
         return self.e, self.d
 
-    def get_key(self):
+    def get_key_pair(self):
         """ Get the public and private key materials
         Returns:
-            (int,int,int) Public key, private key, n """
-        return self.e, self.d, self.n
+            (list[int,int],int) Public key[e, modulous], private key """
+        return list(self.e, self.n), self.d
 
-    def set_key(self, ne, nd, nn, np, nq):
+    def set_key_pair(self, npub, npriv):
         """ Sets the new key for this object
         Args:
-            ne (int): new public key
-            nd (int): new private key
-            nn (int): new modulous
-            np (int): new p
-            nq (int): new q
+            npub (int): new public key
+            npriv (int): new private key
         Returns
             None. """
-        self.e = ne
-        self.d = nd
-        self.n = nn
-        self.p = np
-        self.q = nq
+        self.e = npub[0]
+        self.d = npriv
+        self.n = npub[1]
         return
+
+    def copy_with_public_key(self):
+        """ Creates a copy of this same cryptosystem, but with a new public key.
+        The private key is set to null.
+        Args:
+          pub_key (list[int,int]): The public key to use.
+        Returns:
+          The new cryptosystem. """
+        nc = RSA(self.keysize)
+        rc.set_key_pair(list(self.e,self.n),null)
+        return rc
+
+
+    def get_name():
+        """ Returns the unique name for this cryptosystem """
+        return "RSA"
+
+    def get_priority():
+        """ Returns the priority for this cryptosystem """
+        return 1
 
 if __name__ == "__main__":
     c = RSA(1024)
