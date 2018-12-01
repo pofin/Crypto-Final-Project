@@ -44,7 +44,7 @@ class ServerHello(_ProtocolMessage):
     This messsage supports the following parameters:
       pkc: The name of the PCK algorithm that we want to use.
       symmetric: The name of the symmetric algorithm that we want to use.
-      pub_key: The server's public key.
+      pub_key: The client's public key.
     Returns:
       The created message. """
     pkc = kwargs["pkc"]
@@ -73,7 +73,7 @@ class ClientChallenge(_ProtocolMessage):
     pub_key = kwargs["pub_key"]
 
     # Encrypt the challenge.
-    challenge = server_pub_context.encrypt(challenge)
+    challenge = server_pub_context.encrypt(plain_challenge)
 
     message = cls()
     message._raw = {"challenge": challenge, "pub_key": pub_key}

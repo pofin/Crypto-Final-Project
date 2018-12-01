@@ -12,15 +12,11 @@ class Message:
   def deserialize_from(cls, message):
     """ Deserializes a message.
     Args:
-      message: The message to deserialize.
+      message: The message to deserialize, without the length attribute.
     Returns:
       The deserialized message, as a new instance of cls. """
-    # We don't care about the length. That's only relevant when actually
-    # receiving the message, so we can remove it.
-    message = message[6:]
     # Extract the message.
     raw_message = json.loads(message)
-
     # Create the new instance.
     return cls._from_raw(raw_message)
 

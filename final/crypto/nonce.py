@@ -1,4 +1,14 @@
-class NonceGenerator:
+class Nonce:
+  """ Common interface for nonce generators and verifiers. """
+
+  @classmethod
+  def get_name(self):
+    """
+    Returns:
+      A unique name for this nonce type. """
+    raise NotImplementedError("get_name() must be implemented by subclass.")
+
+class NonceGenerator(Nonce):
   """ Interface for generating nonce values. """
 
   def get_length(self):
@@ -13,7 +23,7 @@ class NonceGenerator:
       A new generated nonce value. """
     raise NotImplementedError("generate() must be implemented by subclass.")
 
-class NonceVerifier:
+class NonceVerifier(Nonce):
   """ Interface for verifying nonce values. This maintains state, so it should
   be used with only one client. """
 
