@@ -1,6 +1,13 @@
 class Mac:
   """ Generic interface for all MAC algorithms. """
 
+  @classmethod
+  def get_name(self):
+    """
+    Returns:
+      A unique name for this MAC algorithm. """
+    raise NotImplementedError("get_name() must be implemented by subclass.")
+
   def get_length(self):
     """
     Returns:
