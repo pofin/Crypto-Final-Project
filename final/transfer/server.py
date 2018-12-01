@@ -40,6 +40,12 @@ class Server(message_passer.MessagePasser):
     server_pub_context, server_priv_context = self.__manager.get_pkc()
     client_pub_context = server_pub_context.copy_with_key(client_key)
 
+    # Set the session key.
+    symmetric_context = self.__manager.get_symmetric()
+    session_key = challenge_message.get_encrypted("session_key",
+                                                  server_priv_context)
+    symmetric_context.set_key(session_key)
+
     # Extract the challenge value.
     response = challenge_message.get_encrypted("challenge",
                                                server_priv_context)
@@ -47,35 +53,24 @@ class Server(message_passer.MessagePasser):
     client_challenge = secrets.token_hex(40)
 
     # Create the response message.
-    response_message = messages.ServerChallenge.create(client_pub_context,
+    response_message = messages.ServerChallenge.create( \
+        client_pub_context, symmetric_context,
         response=response, challenge=client_challenge)
     # Send the message.
     self._write_message(response_message, client_sock)
 
-    # Receive the session start message.
-    session_message = self._read_message(messages.ClientSessionStart,
+    # Receive the session verification message.
+    session_message = self._read_message(messages.ClientSessionVerify,
                                          client_sock)
 
     # Verify the challenge value.
     client_response = session_message.get_encrypted("response",
-                                                    server_priv_context)
+                                                    symmetric_context)
     if client_response != client_challenge:
       # The client challenge is not valid.
       raise RuntimeError("Challenge failed. Expected %s, got %s." % \
                          (client_challenge, client_response))
     logger.debug("Client challenge passed.")
-
-    # Set the session key.
-    symmetric_context = self.__manager.get_symmetric()
-    session_key = session_message.get_encrypted("session_key",
-                                                server_priv_context)
-    symmetric_context.set_key(session_key)
-
-    # Create the session verify message.
-    verify_message = messages.ServerSessionVerify.create( \
-        symmetric_context, verification=response)
-    # Send the verification.
-    self._write_message(verify_message, client_sock)
 
   def __handshake_with(self, client_sock):
     """ Performs the handshake with a client.

@@ -42,10 +42,15 @@ class Client(message_passer.MessagePasser):
     # Generate the random challenge value.
     challenge = secrets.token_hex(40)
 
+    # Generate a session key.
+    symmetric_context = self.__manager.get_symmetric()
+    session_key = symmetric_context.gen_key()
+
     # Create the message.
     client_pub_context, client_priv_context = self.__manager.get_pkc()
     message = messages.ClientChallenge.create(server_pub_context,
-        challenge=challenge, pub_key=client_pub_context.get_key())
+        challenge=challenge, pub_key=client_pub_context.get_key(),
+        session_key=session_key)
     # Send the message.
     self._write_message(message, self.__socket)
 
@@ -55,36 +60,21 @@ class Client(message_passer.MessagePasser):
 
     # Verify the challenge value.
     server_response = response_message.get_encrypted("response",
-                                                     client_priv_context)
+                                                     symmetric_context)
     if server_response != challenge:
       # The server challenge is not valid.
       raise RuntimeError("Challenge failed. Expected %s, got %s." % \
                          (challenge, server_response))
     logger.debug("Server challenge passed.")
 
-    # Generate the session key.
-    symmetric_context = self.__manager.get_symmetric()
-    session_key = symmetric_context.gen_key()
-
     # Extract the server challenge value.
     response = response_message.get_encrypted("challenge", client_priv_context)
 
-    # Create the session start message.
-    session_message = messages.ClientSessionStart.create( \
-        server_pub_context, response=response, session_key=session_key)
+    # Create the session verification message.
+    session_message = messages.ClientSessionVerify.create( \
+        symmetric_context, response=response)
     # Send the message.
     self._write_message(session_message, self.__socket)
-
-    # Wait for the session verification message.
-    verify_message = self._read_message(messages.ServerSessionVerify,
-                                        self.__socket)
-    # Ensure that the server knows the key.
-    session_response = verify_message.get_encrypted("verification",
-                                                    symmetric_context)
-    if session_response != challenge:
-      # The verification is not valid.
-      raise RuntimeError("Session verification fialed. Expected %s, got %s." % \
-                         (challenge, session_response))
 
   def __handshake(self):
     """ Performs the handshake with the server. """
