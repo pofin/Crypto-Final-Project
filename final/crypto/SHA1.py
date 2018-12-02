@@ -57,7 +57,7 @@ def SHA1(m):
             temp_BA ^= w[i-16]
             temp_BA.rol(1) 
             w[i] = temp_BA.copy()
-       
+            
         #initialize hash values for this chunk
         a = h0.copy()
         b = h1.copy()
@@ -65,8 +65,7 @@ def SHA1(m):
         d = h3.copy()
         e = h4.copy()
         
-        
-        for i in range(40,41):
+        for i in range(0,80):
             #the F function used
             if 0 <= i <20:
                 tb = b.copy()
@@ -139,4 +138,7 @@ def SHA1(m):
 
 if __name__ == '__main__':
     x = 67812786123786127856785437834271826378612352135662317896389987387934869
-    print(SHA1(hex(x)))
+    y = "pineapple under the sea"
+    print(SHA1(y.encode()))
+    
+ 
