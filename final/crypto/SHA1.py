@@ -1,9 +1,11 @@
 from bitstring import BitArray
 
-#Implements SHA-1 hash function
-#assumes m is a hex string
-#returns a 160-bit hex string
 def SHA1(m):
+    """ SHA1 hash function.
+    Args:
+      m: The message, as a BitArray.
+    Returns:
+      The message hash, as a BitArray. """
     #initialising variables for use in Hash
     mt = BitArray(m)
     h0 = BitArray('0x67452301')
@@ -13,7 +15,7 @@ def SHA1(m):
     h4 = BitArray('0xC3D2E1F0')
     
     #processing message so that it fits Hash Format
-    m1 = len(BitArray(m).bin)
+    m1 = len(mt.bin)
     m2 = m1
     if m1%8 == 0:
         m2 += 1
@@ -132,7 +134,7 @@ def SHA1(m):
     hh.append(h2)
     hh.append(h3)
     hh.append(h4)
-    return '0x'+hh.hex
+    return hh
 
 
 
@@ -140,5 +142,3 @@ if __name__ == '__main__':
     x = 67812786123786127856785437834271826378612352135662317896389987387934869
     y = "pineapple under the sea"
     print(SHA1(y.encode()))
-    
- 
