@@ -58,6 +58,9 @@ class HMAC(mac.Mac):
     def generate(self, data):
         return Hmac(self.key, data)
 
+    def set_key(self, key):
+        self.key = key
+
 
 if __name__ == '__main__':
     k = 17867656632

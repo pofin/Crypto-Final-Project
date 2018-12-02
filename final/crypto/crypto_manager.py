@@ -160,3 +160,18 @@ class CryptoManager:
     Returns:
       The names of all supported PKCs. """
     return list(self.__public_contexts.keys())
+
+  def set_mac_keys(self, key):
+    """ Convenience function to set the MAC key for all algorithms.
+    Args:
+      key: The key to set. """
+    def set_for_type(context_dict):
+      """ Sets the MAC keys in a specific type of context.
+      Args:
+        context_dict: Context dictionary. """
+      for _, context in context_dict.items():
+        context.set_mac_key(key)
+
+    set_for_type(self.__private_contexts)
+    set_for_type(self.__public_contexts)
+    set_for_type(self.__symmetric_contexts)

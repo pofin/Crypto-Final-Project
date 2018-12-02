@@ -21,3 +21,9 @@ class Mac:
     Returns:
       The generated MAC, as a string. """
     raise NotImplementedError("generate() must be implemented by subclass.")
+
+  def set_key(self, key):
+    """ Sets a new key to use for the MAC.
+    Args:
+      key: The new key to set. """
+    raise NotImplementedError("set_key() must be implemented by subclass.")
