@@ -133,7 +133,7 @@ def SHA1(m):
     hh.append(h2)
     hh.append(h3)
     hh.append(h4)
-    return hh.hex
+    return '0x'+hh.hex
 
 
 
