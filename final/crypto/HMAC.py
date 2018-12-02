@@ -1,5 +1,6 @@
 from bitstring import BitArray
 from SHA1 import *
+from . import mac
 
 #HMAC protocol takes two hex strings and returns one hex string
 #assumes both are hex strings length doesn't matter
@@ -36,9 +37,24 @@ def HMAC(K,m):
     temp.append(result)
     
     return SHA1(temp)
+
+
+class HMAC(mac.Mac):
     
+    @classmethod
+    def get_name(cls):
+        return "HMAC"
+    
+    def get_length(self):
+        return 42
+    
+    def generate(self, key , message):
+        return HMAC(key,message)
+
+  
 
 if __name__ == '__main__':
     k = 17867656632
     m = 182347678326476327486327864327864328372643278643287
     print(HMAC(hex(k),hex(m)))
+    
