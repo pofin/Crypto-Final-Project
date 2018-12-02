@@ -1,4 +1,4 @@
-from cryptosystem import Symmetric
+from .cryptosystem import Symmetric
 from bitarray import *
 import secrets
 import math
@@ -53,35 +53,34 @@ class RC4(Symmetric):
         Args:
             None.
         Returns:
-            (bitarray) The generated key. """
+            (string) The generated key. """
         tmp_key = secrets.randbits(self.keysize)
         for i in range(self.keysize):
             self.key[self.keysize-1-i] = ((tmp_key >> i) & 1)
-        return self.key
+        return self.key.tobytes().decode("latin-1")
 
     def set_key(self, new_key):
         """ Sets the key to the argument value
         Args:
-            new_key (bittaray): the new key to set_key.
-        Returns:S
-            (bitarray) New key. """
-        print("nkey",new_key)
-        self.key = bitarray(new_key)
-        return self.key
+            new_key (string): the new key to set. """
+        self.key = bitarray()
+        self.key.frombytes(new_key.encode("latin-1"))
 
     def get_key(self):
         """ Get the current gen_key
         Args:
             None.
         Returns:
-            (bitarray) Current key. """
-        return self.key
+            (string) Current key. """
+        return self.key.tobytes().decode("latin-1")
 
-    def get_name():
+    @classmethod
+    def get_name(cls):
         """ Returns the unique name for this cryptosystem """
         return "RC4"
 
-    def get_priority():
+    @classmethod
+    def get_priority(cls):
         """ Returns the priority for this cryptosystem """
         return 1
 

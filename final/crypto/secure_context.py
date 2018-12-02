@@ -94,6 +94,12 @@ class SecureContext:
       The currently-set encryption key for this context. """
     raise NotImplementedError("get_key() must be implemented by subclass.")
 
+  def set_mac_key(self, key):
+    """ Sets a new key for the MAC.
+    Args:
+      key: The new key to set. """
+    self._mac.set_key(key)
+
 class SymmetricContext(SecureContext):
   """ SecureContext that uses a symmetric encryption algorithm internally. """
 

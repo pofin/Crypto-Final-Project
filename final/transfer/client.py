@@ -41,6 +41,8 @@ class Client(message_passer.MessagePasser):
       server_pub_context: The public key secure context for the server. """
     # Generate the random challenge value.
     challenge = secrets.token_hex(40)
+    # Generate a random MAC key.
+    mac_key = secrets.token_hex(40)
 
     # Generate a session key.
     symmetric_context = self.__manager.get_symmetric()
@@ -50,9 +52,15 @@ class Client(message_passer.MessagePasser):
     client_pub_context, client_priv_context = self.__manager.get_pkc()
     message = messages.ClientChallenge.create(server_pub_context,
         challenge=challenge, pub_key=client_pub_context.get_key(),
-        session_key=session_key)
+        session_key=session_key, mac_key=mac_key)
     # Send the message.
     self._write_message(message, self.__socket)
+
+    # Set the MAC key after the message is sent, so the outgoing message uses
+    # the old MAC.
+    self.__manager.set_mac_keys(mac_key)
+    # This one is not in the manager, and so has to be set manually.
+    server_pub_context.set_mac_key(mac_key)
 
     # Wait for the response from the server.
     response_message = self._read_message(messages.ServerChallenge,

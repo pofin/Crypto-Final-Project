@@ -52,6 +52,13 @@ class Server(message_passer.MessagePasser):
     # Create a challenge value for the client.
     client_challenge = secrets.token_hex(40)
 
+    # Set the MAC key.
+    mac_key = challenge_message.get_encrypted("mac_key",
+                                              server_priv_context)
+    self.__manager.set_mac_keys(mac_key)
+    # This one is not in the manager, and so has to be set manually.
+    client_pub_context.set_mac_key(mac_key)
+
     # Create the response message.
     response_message = messages.ServerChallenge.create( \
         client_pub_context, symmetric_context,
