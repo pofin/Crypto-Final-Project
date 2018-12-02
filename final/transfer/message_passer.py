@@ -24,7 +24,7 @@ class MessagePasser:
 
       if len(data_this_round) == 0:
         # Client disconnected.
-        raise socket.error("Client disconnected.")
+        raise socket.error("Endpoint disconnected.")
 
     return data
 
