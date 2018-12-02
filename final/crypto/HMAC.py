@@ -41,6 +41,9 @@ def Hmac(K,m):
 
 class HMAC(mac.Mac):
     
+    def __init__(self,k):
+        self.key = k
+    
     @classmethod
     def get_name(cls):
         return "HMAC"
@@ -48,8 +51,8 @@ class HMAC(mac.Mac):
     def get_length(self):
         return 42
     
-    def generate(self, key , message):
-        return Hmac(key,message)
+    def generate(self, data):
+        return Hmac(self.key, data)
 
   
 
