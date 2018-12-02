@@ -107,18 +107,20 @@ class GoldwasserMicali(Pkc):
     def encrypt_public(self, message):
         """ Encrypts a message using the public key.
         Args:
-            message (string): The message to encrypt as a sting of bits,e.g. "10010"
+            message (string): The message to encrypt.
         Returns:
             (string) The encrypted message. """
+        bit_message = bitarray()
+        bit_message.frombytes(message.encode("latin-1"))
 
         cypher = list()
-        for bit in message:
+        for bit in bit_message:
             randNumber = secrets.randbelow(self.n)
             while(randNumber == self.p or randNumber == self.q):
                 randNumber = secrets.randBelow(self.n)
-            if(bit == '0'):
+            if not bit:
                 cipherNumber = ((randNumber ** 2) * pow(self.x, 0)) % self.n
-            elif(bit == '1'):
+            else:
                 cipherNumber = ((randNumber ** 2) * pow(self.x, 1)) % self.n
             cypher.append(cipherNumber)
         cypherString = ""
@@ -133,17 +135,16 @@ class GoldwasserMicali(Pkc):
         Returns:
             (string) The decrypted message. """
 
-        plaintext = ""
+        plaintext = bitarray()
         messageList = message.split(',')
-        print(messageList)
         for string in messageList:
             num = int(string)
             if(self.is_quad_res(num, self.p, self.q)):
-                plaintext = plaintext + "0"
+                plaintext.append(False)
             else:
-                plaintext = plaintext + "1"
+                plaintext.append(True)
 
-        return plaintext
+        return plaintext.tobytes().decode("latin-1")
 
     def gen_key_pair(self):
         """ Generates a random public-private key pair suitable for this
@@ -189,7 +190,7 @@ class GoldwasserMicali(Pkc):
         Returns:
           The new cryptosystem. """
         rc = GoldwasserMicali(self.keysize)
-        rc.set_key_pair(pub_key, None)
+        rc.set_key_pair(pub_key, (None, None))
         return rc
 
     @classmethod
@@ -200,12 +201,14 @@ class GoldwasserMicali(Pkc):
     @classmethod
     def get_priority(cls):
         """ Returns the priority for this cryptosystem """
-        return 1
+        return 2
 
-c = GoldwasserMicali(1024)
-print(c.gen_key_pair())
-msg = "100101010100100111001001010001001100101010"
-enc = c.encrypt_public(msg)
-print(enc)
-dec = c.decrypt_private(enc)
-print(dec)
+
+if __name__ == "__main__":
+  c = GoldwasserMicali(1024)
+  print(c.gen_key_pair())
+  msg = "100101010100100111001001010001001100101010"
+  enc = c.encrypt_public(msg)
+  print(enc)
+  dec = c.decrypt_private(enc)
+  print(dec)
