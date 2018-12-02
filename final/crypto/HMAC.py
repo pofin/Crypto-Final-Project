@@ -4,7 +4,7 @@ from . import mac
 
 #HMAC protocol takes two hex strings and returns one hex string
 #assumes both are hex strings length doesn't matter
-def HMAC(K,m):
+def Hmac(K,m):
     key = BitArray(K)
     mess = BitArray(m)
     
@@ -49,7 +49,7 @@ class HMAC(mac.Mac):
         return 42
     
     def generate(self, key , message):
-        return HMAC(key,message)
+        return Hmac(key,message)
 
   
 
