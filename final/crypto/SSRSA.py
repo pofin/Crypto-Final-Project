@@ -17,8 +17,11 @@ class SSRSA(RSA):
         h2.frombytes(bytes.fromhex(h1[2:]))
         m = bitarray(0)
         m.frombytes(message.encode("latin-1"))
-        while m.length() < h2.length(): m.insert(0, False)
-        return en1, (h2^m).tobytes().decode("latin-1")
+        dif = h2.length() - (m.length()%h2.length())
+        for i in range(dif): m.insert(0, False)
+        st = ""
+        for i in range(int(m.length()/h2.length())): st += (h2^m[i*h2.length():(i+1)*h2.length()]).tobytes().decode("latin-1")
+        return en1, st
 
     def encrypt_private(self, message):
         """ Encrypts a message using the private key.
@@ -26,8 +29,19 @@ class SSRSA(RSA):
             message (string): The message to encrypt.
         Returns:
             (int, string) The encrypted message. """
-        enc = pow(self.__to_int(message), self.d, self.n)
-        return self.__from_int(enc)
+        r = secrets.randbelow(2**self.keysize)
+        en1 = pow(r, self.d, self.n)
+        h1 = SHA1.SHA1(hex(r))
+        h2 = bitarray(0)
+        print(r,h1)
+        h2.frombytes(bytes.fromhex(h1[2:]))
+        m = bitarray(0)
+        m.frombytes(message.encode("latin-1"))
+        dif = h2.length() - (m.length()%h2.length())
+        for i in range(dif): m.insert(0, False)
+        st = ""
+        for i in range(int(m.length()/h2.length())): st += (h2^m[i*h2.length():(i+1)*h2.length()]).tobytes().decode("latin-1")
+        return en1, st
 
     def decrypt_public(self, message):
         """ Decrypts a message using the public key.
@@ -35,8 +49,18 @@ class SSRSA(RSA):
             message (int, string): The message to decrypt.
         Returns:
             (string) The decrypted message. """
-        dec = pow(self.__to_int(message), self.e, self.n)
-        return self.__from_int(dec)
+        r = pow(message[0], self.e, self.n)
+        h1 = SHA1.SHA1(hex(r))
+        h2 = bitarray(0)
+        print(r,h1)
+        h2.frombytes(bytes.fromhex(h1[2:]))
+        m = bitarray(0)
+        m.frombytes(message[1].encode("latin-1"))
+        st = ""
+        for i in range(int(m.length()/h2.length())): st += (h2^m[i*h2.length():(i+1)*h2.length()]).tobytes().decode("latin-1")
+        i = 0
+        while st[i] == '\x00': i+=1
+        return st[i:]
 
     def decrypt_private(self, message):
         """ Decrypts a message using the private key.
@@ -51,7 +75,8 @@ class SSRSA(RSA):
         h2.frombytes(bytes.fromhex(h1[2:]))
         m = bitarray(0)
         m.frombytes(message[1].encode("latin-1"))
-        st = (h2^m).tobytes().decode("latin-1")
+        st = ""
+        for i in range(int(m.length()/h2.length())): st += (h2^m[i*h2.length():(i+1)*h2.length()]).tobytes().decode("latin-1")
         i = 0
         while st[i] == '\x00': i+=1
         return st[i:]
