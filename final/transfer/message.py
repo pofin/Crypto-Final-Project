@@ -17,8 +17,13 @@ class Message:
       The deserialized message, as a new instance of cls. """
     # Extract the message.
     raw_message = json.loads(message)
+
     # Create the new instance.
-    return cls._from_raw(raw_message)
+    message = cls._from_raw(raw_message)
+    # Mark that we haven't updated the nonce for this message yet.
+    message.__nonce_updated = False
+
+    return message
 
   @classmethod
   def _from_raw(cls, raw_message):
@@ -60,6 +65,11 @@ class Message:
       secure_context: The SecureContext to use when decrypting this field.
     Returns:
       The decrypted field value. """
+    if not self.__nonce_updated:
+      # Update the nonce verifier.
+      secure_context.update_nonce()
+      self.__nonce_updated = True
+
     field = self._get_raw()[name]
     return secure_context.decrypt(field)
 
