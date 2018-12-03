@@ -36,8 +36,10 @@ def main():
 
   my_client = client.Client(args.host, args.port, manager)
 
-  # Send a message.
-  my_client.send_message("Hello World!")
+  # Send messages.
+  while True:
+    message = input("Message> ")
+    my_client.send_message(message)
 
 
 if __name__ == "__main__":
