@@ -102,9 +102,9 @@ class CryptoManager:
       client_symmetric_contexts.append((priority, symmetric))
 
     # Sort each by priority.
-    client_public_contexts.sort()
-    client_private_contexts.sort()
-    client_symmetric_contexts.sort()
+    client_public_contexts.sort(key=lambda x: x[0])
+    client_private_contexts.sort(key=lambda x: x[0])
+    client_symmetric_contexts.sort(key=lambda x: x[0])
 
     # Now, find the highest-priority match for each.
     self.__public_context = find_match(client_public_contexts,

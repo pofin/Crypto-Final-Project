@@ -53,6 +53,13 @@ class ConfigHelper:
                                               self.__nonce_ver, self.__mac)
     self.__manager.add_symmetric_context(rc4_con)
 
+  def add_des(self):
+    """ Initializes DES. """
+    des = DES.TripleDES()
+    des_con = secure_context.SymmetricContext(des, self.__nonce_gen,
+                                              self.__nonce_ver, self.__mac)
+    self.__manager.add_symmetric_context(des_con)
+
   def add_rsa(self, conf_file):
     """ Initializes RSA.
     Args:

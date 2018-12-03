@@ -201,7 +201,7 @@ class GoldwasserMicali(Pkc):
     @classmethod
     def get_priority(cls):
         """ Returns the priority for this cryptosystem """
-        return 2
+        return 3
 
 
 if __name__ == "__main__":
