@@ -69,6 +69,41 @@ class RSA(Pkc):
             return False
         return True
 
+    def is_prime_MR_Det(self, n):
+        """ Tests a number to be prime using the Miller Rabin Primality
+        Test
+        Args:
+            n (int): number to be tested for primality.
+            k (int): accuracy of the test, number of tests to run
+        Returns:
+            True if most likely prime, False if not prime. """
+        d = n-1
+        r = 0
+        if (n < 4):
+            return True
+        while d%2 == 0:
+            d = d >> 1
+            r += 1
+        for a in range(2, int(2*(math.log(n)**2))):
+            x = pow(a,d,n)
+            test = False
+            for s in range(0,r-1):
+                if pow(a,d*(2**r),n) == n-1:
+                    test = True
+                    break
+            if x == 1 or x == n-1:
+                continue
+            if test == True:
+                return False
+            for j in range(r-1):
+                x = pow(x,2,n)
+                if x == n-1:
+                    break
+            if x == n-1:
+                continue
+            return False
+        return True
+
     def gcd(self, a, b):
         """ Computes the greatest common denominator
         Args:
@@ -150,10 +185,13 @@ class RSA(Pkc):
         while found_pair == False:
             self.p = self.rand_prime(int(self.keysize/2+1))
             self.q = self.rand_prime(int(self.keysize/2+1))
+            self.n = self.p*self.q
             self.e = secrets.randbits(self.keysize)
+            while self.e > self.n:
+                self.e = secrets.randbits(self.keysize - 1)
+                print(self.e, self.n)
             self.d = self.invert(self.e, (self.p - 1)*(self.q - 1))
             if self.d != None: found_pair = True
-        self.n = self.p*self.q
         return (self.e, self.n), self.d
 
     def get_key_pair(self):
@@ -196,9 +234,9 @@ class RSA(Pkc):
         return 1
 
 if __name__ == "__main__":
-    c = RSA(1024)
-    print(c.gen_key_pair())
-    msg = int(input("Message => "))
+    c = RSA(128)
+    c.set_key_pair(list((111405670540845042695715069191615509637, 231038902772913249059615478169528941503)),30427868915927038427378379900132143189)
+    msg = input("Message => ")
     enc = c.encrypt_public(msg)
     print(enc)
     dec = c.decrypt_private(enc)
