@@ -5,7 +5,7 @@ import sys
 
 from final.transfer import client
 from final.crypto import crypto_manager, stupid_symmetric, secure_context
-from final.crypto import GoldwasserMicali
+from final.crypto import GoldwasserMicali, SSRSA
 from final.crypto import HMAC, stupid_pkc, RSA, RC4, sequential_nonce
 
 # Keys to use for testing.
@@ -31,6 +31,8 @@ rc4 = RC4.RC4(RC4_SIZE)
 stupid_pkc_crypto = stupid_pkc.StupidCrypto()
 rsa = RSA.RSA(RSA_SIZE)
 rsa.set_key_pair((RSA_E, RSA_N), RSA_D)
+ssrsa = SSRSA.SSRSA(RSA_SIZE)
+ssrsa.set_key_pair((RSA_E, RSA_N), RSA_D)
 gm = GoldwasserMicali.GoldwasserMicali(GM_SIZE)
 gm.set_key_pair(GM_PUB, GM_PRIV)
 nonce_gen = sequential_nonce.SequentialNonceGenerator(NONCE_SIZE)
@@ -42,6 +44,8 @@ stupid_priv = secure_context.PrivateKeyContext(stupid_pkc_crypto, nonce_gen,
                                                nonce_ver, mac)
 rsa_pub = secure_context.PublicKeyContext(rsa, nonce_gen, nonce_ver, mac)
 rsa_priv = secure_context.PrivateKeyContext(rsa, nonce_gen, nonce_ver, mac)
+ssrsa_pub = secure_context.PublicKeyContext(ssrsa, nonce_gen, nonce_ver, mac)
+ssrsa_priv = secure_context.PrivateKeyContext(ssrsa, nonce_gen, nonce_ver, mac)
 gm_pub = secure_context.PublicKeyContext(gm, nonce_gen, nonce_ver, mac)
 gm_priv = secure_context.PrivateKeyContext(gm, nonce_gen, nonce_ver, mac)
 stupid_con = secure_context.SymmetricContext(stupid_crypto, nonce_gen,
@@ -52,6 +56,7 @@ rc4_con = secure_context.SymmetricContext(rc4, nonce_gen, nonce_ver, mac)
 manager = crypto_manager.CryptoManager()
 manager.add_pkc_contexts(stupid_pub, stupid_priv)
 manager.add_pkc_contexts(rsa_pub, rsa_priv)
+manager.add_pkc_contexts(ssrsa_pub, ssrsa_priv)
 manager.add_pkc_contexts(gm_pub, gm_priv)
 manager.add_symmetric_context(stupid_con)
 manager.add_symmetric_context(rc4_con)
