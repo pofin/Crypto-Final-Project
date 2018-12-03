@@ -1,5 +1,5 @@
-from RSA import *
-import SHA1
+from .RSA import *
+from . import SHA1
 import secrets
 
 class SSRSA(RSA):
@@ -77,6 +77,17 @@ class SSRSA(RSA):
         while st[i] == '\x00': i+=1
         return st[i:]
 
+    def copy_with_public_key(self, pub_key):
+        """ Creates a copy of this same cryptosystem, but with a new public key.
+        The private key is set to None.
+        Args:
+          pub_key (list[int,int]): The public key to use.
+        Returns:
+          The new cryptosystem. """
+        rc = SSRSA(self.keysize)
+        rc.set_key_pair(pub_key, None)
+        return rc
+
     @classmethod
     def get_name(cls):
         """ Returns the unique name for this cryptosystem """
@@ -85,7 +96,8 @@ class SSRSA(RSA):
     @classmethod
     def get_priority(cls):
         """ Returns the priority for this cryptosystem """
-        return 1
+        return 3
+
 
 if __name__ == "__main__":
     c = SSRSA(512)
