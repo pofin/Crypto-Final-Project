@@ -1,6 +1,6 @@
 import math
 from bitstring import BitArray
-from cryptosystem import Pkc
+from .cryptosystem import Pkc
 import random 
 
 
@@ -34,6 +34,14 @@ def millrab(n):
     return True
 
 class BlumGoldwasser(Pkc):
+    @classmethod
+    def get_name(cls):
+      return "BlumGoldwasser"
+
+    @classmethod
+    def get_priority(cls):
+      return 4
+
     def __init__(self):
         self.p = 0
         self.q = 0
@@ -41,15 +49,13 @@ class BlumGoldwasser(Pkc):
         self.a = 0
         self.b = 0
         self.h = 0
-        self.recv_pub_key = 0
-        self.recv_h = 0
     
     #encrypts message with reciever's public key
     #returns a tuple (ctext,x_t+1)
     def encrypt_public(self, message):
         m = BitArray(message.encode("latin-1"))
-        n = self.recv_pub_key
-        h = self.recv_h
+        n = self.n
+        h = self.h
         t = int(m.length/h)
         mb = m.bin
         low = 0
@@ -119,21 +125,13 @@ class BlumGoldwasser(Pkc):
         self.b = pow(self.q,self.p-2,self.p)
         self.n = self.p*self.q
         self.h = int(math.log(int(math.log(self.n,2)),2))
-        
-    
-    #sets the reciever's pub_key that the message is encrypted with 
-    def set_recv_pub_key(self, pub_key):
-        self.recv_pub_key = pub_key
-        self.recv_h = int(math.log(int(math.log(pub_key,2)),2))
-    
+
+        return (self.n,[self.p,self.q])
+
     #returns public and private key in a tuple with the 
     #second element the a list of the private keys p,q
     def get_key_pair(self):
         return (self.n,[self.p,self.q])
-    
-    #returns the reciever's pub_key that the message is encrypted with 
-    def get_recv_pub_key(self, pub_key):
-        return self.recv_pub_key    
     
     #set the values of a key pair
     #pub_key = int , priv_key = list of ints [p,q,a,b,h]
@@ -148,10 +146,10 @@ class BlumGoldwasser(Pkc):
         self.h = int(math.log(int(math.log(self.n,2)),2))
     
     #copys crypto system with specified public key
-    #private key is zeroed out
+    #private key is nullified.
     def copy_with_public_key(self, pub_key):
         temp = BlumGoldwasser()
-        temp.set_key_pair(pub_key,[0,0])
+        temp.set_key_pair(pub_key,[2,2])
         return temp
     
     

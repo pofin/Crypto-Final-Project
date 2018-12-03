@@ -1,5 +1,12 @@
 # Cryptography I Final project
 
+## Write-ups
+
+### Daniel
+
+My write up is available
+[here.](https://github.com/pofin/Crypto-Final-Project/blob/master/docs/Crypto_White_Hat_Write_Up.pdf)
+
 ## Tasks
 
 ### SSL/SSH Protocol Implementation
