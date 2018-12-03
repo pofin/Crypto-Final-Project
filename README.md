@@ -7,6 +7,11 @@
 My write up is available
 [here.](https://github.com/pofin/Crypto-Final-Project/blob/master/docs/Crypto_White_Hat_Write_Up.pdf)
 
+### Nolan
+
+Here is my write up 
+[here.](https://github.com/pofin/Crypto-Final-Project/blob/master/docs/write_up_Nolan_Pofi.pdf)
+
 ## Tasks
 
 ### SSL/SSH Protocol Implementation
