@@ -37,7 +37,7 @@ Nolan
 #### Not Started
 Nolan
 
-## RC4
+## RC4 - Jacob Doskocil
 RC4 is a symmetric cryptosystem, that works by taking a fixed size key, and uses it to generate a keystream that is used in a similar manner as a one time pad. The key stream is continuously generated up to the length of the message to be sent. It is then XORed with the message to create the encrypted text. The cryptosystem is implemented as a class in the file [RC4.py](final/crypto/RC4.py).
 
 ### Instantiation
@@ -104,7 +104,7 @@ decrypted_message = myRC4.decrypt(encrypted_message)
 ```
 Since the encryption is done using XORs, the decryption function works the same way as the encryption. The keystream is initialized the same way as in the encryption function, and then the message is decrypted byte by byte modifying the keystream in the same fashion as in the encryption function.
 
-## RSA
+## RSA - Jacob Doskocil
 RSA is a public key cryptosystem, that works using basic modular math with large numbers. The cryptosystem has a public key, consisting of an encryption value and a modular base, and a private key, the decryption value. The cryptosystem is implemented as a class in the file [RSA.py](final/crypto/RSA.py).
 
 ### Instantiation
@@ -168,7 +168,7 @@ This function decrypts an encrypted message using the public key. It takes a str
 decrypted_message2 = myRSA.decrypt_private(encrypted_message2)
 ```
 
-## SSRSA
+## SSRSA - Jacob Doskocil
 This cryptosystem is a Semantically Secure version of RSA. It inherits most of the functions from the base RSA class, and overwrites the encryption and decryption functions.
 
 ### get_name()
