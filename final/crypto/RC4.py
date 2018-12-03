@@ -65,6 +65,7 @@ class RC4(Symmetric):
             new_key (string): the new key to set. """
         self.key = bitarray()
         self.key.frombytes(new_key.encode("latin-1"))
+        self.keylength = self.key.length()
 
     def get_key(self):
         """ Get the current gen_key
