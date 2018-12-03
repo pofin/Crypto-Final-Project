@@ -13,6 +13,9 @@ class StupidNonceGenerator(nonce.NonceGenerator):
   def generate(self):
     return str(42)
 
+  def get(self):
+    return str(42)
+
 class StupidNonceVerifier(nonce.NonceVerifier):
   """ Nonce verifier for testing that always deems a nonce valid. """
 
@@ -22,3 +25,6 @@ class StupidNonceVerifier(nonce.NonceVerifier):
 
   def verify(self, nonce):
     return True
+
+  def advance(self):
+    pass

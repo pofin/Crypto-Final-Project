@@ -76,6 +76,9 @@ class ClientChallenge(_ProtocolMessage):
     plain_mac_key = kwargs["mac_key"]
     pub_key = kwargs["pub_key"]
 
+    # Update the nonce before encrypting fields.
+    server_pub_context.update_nonce()
+
     # Encrypt the challenge and session key.
     challenge = server_pub_context.encrypt(plain_challenge)
     session_key = server_pub_context.encrypt(plain_session_key)
@@ -104,6 +107,9 @@ class ServerChallenge(_ProtocolMessage):
     plain_challenge = kwargs["challenge"]
     plain_response = kwargs["response"]
 
+    # Update the nonce before encrypting fields.
+    client_pub_context.update_nonce()
+
     # Encrypt both the challenge and response.
     challenge = client_pub_context.encrypt(plain_challenge)
     response = session_context.encrypt(plain_response)
@@ -127,6 +133,9 @@ class ClientSessionVerify(_ProtocolMessage):
       The created message. """
     plain_response = kwargs["response"]
 
+    # Update the nonce before encrypting fields.
+    session_context.update_nonce()
+
     # Encrypt the response.
     response = session_context.encrypt(plain_response)
 
@@ -147,6 +156,9 @@ class SessionMessage(_ProtocolMessage):
     This message supports the following parameters:
       contents: Arbitrary data to send to the client. (encrypted) """
     plain_contents = kwargs["contents"]
+
+    # Update the nonce before encrypting fields.
+    session_context.update_nonce()
 
     # Encrypt the data.
     contents = session_context.encrypt(plain_contents)

@@ -23,7 +23,7 @@ class SecureContext:
       data: The raw data.
     Returns:
       The data, with the nonce and plaintext appended. """
-    nonce = self._nonce_gen.generate()
+    nonce = self._nonce_gen.get()
     with_nonce = data + nonce
 
     mac = self._mac.generate(with_nonce)
@@ -99,6 +99,11 @@ class SecureContext:
     Args:
       key: The new key to set. """
     self._mac.set_key(key)
+
+  def update_nonce(self):
+    """ Updates both the nonce generator and verifier, advancing the state. """
+    self._nonce_gen.generate()
+    self._nonce_ver.advance()
 
 class SymmetricContext(SecureContext):
   """ SecureContext that uses a symmetric encryption algorithm internally. """
