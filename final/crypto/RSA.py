@@ -231,7 +231,7 @@ class RSA(Pkc):
     @classmethod
     def get_priority(cls):
         """ Returns the priority for this cryptosystem """
-        return 1
+        return 2
 
 if __name__ == "__main__":
     c = RSA(128)

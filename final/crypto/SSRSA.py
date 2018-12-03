@@ -77,6 +77,16 @@ class SSRSA(RSA):
         while st[i] == '\x00': i+=1
         return st[i:]
 
+    @classmethod
+    def get_name(cls):
+        """ Returns the unique name for this cryptosystem """
+        return "SSRSA"
+
+    @classmethod
+    def get_priority(cls):
+        """ Returns the priority for this cryptosystem """
+        return 1
+
 if __name__ == "__main__":
     c = SSRSA(512)
     print(c.gen_key_pair())
