@@ -27,6 +27,7 @@ def main():
   # Initialize the cryptosystems.
   config = config_helper.ConfigHelper()
   config.add_rc4(args.rc4_conf)
+  config.add_des()
   config.add_rsa(args.rsa_conf)
   config.add_ssrsa(args.ssrsa_conf)
   config.add_goldwassermicali(args.gm_conf)

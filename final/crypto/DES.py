@@ -20,10 +20,11 @@ class TripleDES(Symmetric):
                 bitMessage.insert(len(bitMessage), 0)
 
         cipher = blockChainTripleDES(bitMessage, self.key1, self.key2, self.key3, 0)
-        return cipher.to01()
+        return cipher.tobytes().decode("latin-1")
 
     def decrypt(self, message):
-        cipher = bitarray(message)
+        cipher = bitarray()
+        cipher.frombytes(message.encode("latin-1"))
         plaintext = blockChainTripleDES(cipher, self.key1, self.key2, self.key3, 1)
         decoded = plaintext.tobytes().decode('latin-1')
         indexOfEnd = decoded.find("ENDMESS")
@@ -34,7 +35,7 @@ class TripleDES(Symmetric):
         Args:
             None.
         Returns:
-            None."""
+            A key string. """
 
         key1 = bin(secrets.randbits(64))[2:]
         key2 = bin(secrets.randbits(64))[2:]
@@ -52,13 +53,25 @@ class TripleDES(Symmetric):
         self.key2 = key2
         self.key3 = key3
 
-    def set_key(self, newKeysList):
+        key1 = bitarray(self.key1)
+        key2 = bitarray(self.key2)
+        key3 = bitarray(self.key3)
+        concat = key1 + key2 + key3
+
+        return concat.tobytes().decode("latin-1")
+
+    def set_key(self, newKey):
         """ Sets the key to the argument value
         Args:
-            newKeysList List[string,string,string]: the new keys to set. """
-        self.key1 = newKeysList[0]
-        self.key2 = newKeysList[1]
-        self.key3 = newKeysList[2]
+            newKey (string) The new key to set. """
+        bitKey = bitarray()
+        bitKey.frombytes(newKey.encode("latin-1"))
+        newKey = bitKey.to01()
+
+        # Split the individual keys.
+        self.key1 = newKey[:self.keysize]
+        self.key2 = newKey[self.keysize:self.keysize * 2]
+        self.key3 = newKey[self.keysize * 2:]
 
     def get_key(self):
         """ Get the current gen_key
@@ -76,7 +89,7 @@ class TripleDES(Symmetric):
     @classmethod
     def get_priority(cls):
         """ Returns the priority for this cryptosystem """
-        return 1
+        return 2
   
 
 def DES(plaintext,key,mode):
